@@ -1,0 +1,2 @@
+import { requireUser } from '../../utils/auth'; import { readStore, writeStore } from '../../utils/store'
+export default defineEventHandler(async event=>{const userId=requireUser(event),id=getRouterParam(event,'id'),store=await readStore(),route=store.routes.find(r=>r.id===id);if(!route||!store.projects.some((p:any)=>p.id===route.projectId&&p.userId===userId))throw createError({statusCode:404});store.routes=store.routes.filter(r=>r.id!==id);await writeStore(store);return{ok:true}})

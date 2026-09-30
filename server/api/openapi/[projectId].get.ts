@@ -1,0 +1,2 @@
+import { requireUser } from '../../utils/auth'; import { buildOpenApi } from '../../utils/openapi'; import { readStore } from '../../utils/store'
+export default defineEventHandler(async event=>{const userId=requireUser(event),id=getRouterParam(event,'projectId'),store=await readStore(),project=store.projects.find((p:any)=>p.id===id&&p.userId===userId);if(!project)throw createError({statusCode:404});return buildOpenApi(project,store.routes.filter(r=>r.projectId===id))})

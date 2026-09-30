@@ -1,0 +1,2 @@
+import { requireUser } from '../../utils/auth'; import { readStore } from '../../utils/store'
+export default defineEventHandler(async event => { const userId=requireUser(event); const projectId=getQuery(event).projectId as string; const store=await readStore(); if(!store.projects.some((p:any)=>p.id===projectId&&p.userId===userId)) throw createError({statusCode:404}); return store.routes.filter(r=>r.projectId===projectId) })
