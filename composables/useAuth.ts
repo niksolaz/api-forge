@@ -1,9 +1,11 @@
+import type { AuthUser } from "~/types";
+
 export const useAuth = () => {
-  const user = useState<unknown | null>("user", () => null);
+  const user = useState<AuthUser | null>("user", () => null);
   const loaded = useState("auth-loaded", () => false);
 
   async function refresh() {
-    const data = await $fetch("/api/auth/me");
+    const data = await $fetch<{ user: AuthUser | null }>("/api/auth/me" as string);
     user.value = data.user;
     loaded.value = true;
   }

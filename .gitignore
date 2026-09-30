@@ -2,5 +2,9 @@ node_modules
 .nuxt
 .output
 .env
+.env.*
+!.env.example
 server/data/store.json
+server/data/*.json
+!server/data/.gitkeep
 *.log

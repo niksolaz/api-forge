@@ -3,6 +3,10 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   runtimeConfig: {
     sessionSecret: process.env.NUXT_SESSION_SECRET || "change-me-in-production",
+    dataEncryptionKey:
+      process.env.NUXT_DATA_ENCRYPTION_KEY ||
+      process.env.NUXT_SESSION_SECRET ||
+      "change-me-in-production",
     public: { appName: "API Forge" },
   },
   app: {

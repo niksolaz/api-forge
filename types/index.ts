@@ -1,6 +1,7 @@
 export type DatabaseProvider = "sqlite" | "postgresql" | "supabase" | "mysql";
 export type AuthMode = "public" | "api-key" | "bearer" | "session";
 export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+export interface AuthUser { id: string; email: string }
 export interface SecurityRule {
   id: string;
   name: string;

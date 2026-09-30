@@ -12,6 +12,15 @@ npm run dev
 
 Apri `http://localhost:3000`, crea un account e completa l'onboarding. I dati del builder sono salvati localmente in `server/data/store.json` (ignorato da Git).
 
+Genera due secret diversi per `.env`:
+
+```bash
+openssl rand -hex 32 # NUXT_SESSION_SECRET
+openssl rand -hex 32 # NUXT_DATA_ENCRYPTION_KEY
+```
+
+`NUXT_DATA_ENCRYPTION_KEY` cifra con AES-256-GCM le API key LLM e le connection URL prima che vengano scritte nel datastore. Non cambiare o perdere questa chiave: senza di essa i secret già cifrati non sono recuperabili.
+
 ## Funzioni incluse
 
 - signup, signin e signout con sessione firmata in cookie HttpOnly;
@@ -29,4 +38,4 @@ Il modello di dominio usa un contratto repository indipendente dal database. Ogn
 
 ## Nota sicurezza
 
-La demo persiste le credenziali di progetto lato server per rendere completo il flusso locale. Prima della produzione collegare un secret manager/KMS e cifrare `llmApiKey` e `databaseUrl` at-rest. Impostare sempre `NUXT_SESSION_SECRET` con un valore casuale robusto.
+`.env`, tutte le sue varianti e `server/data/*.json` sono esclusi da Git. `.env.example` contiene solo placeholder ed è l'unico file di configurazione versionato. I secret dei workspace sono cifrati at-rest; in produzione è comunque consigliato fornire `NUXT_DATA_ENCRYPTION_KEY` tramite il secret manager della piattaforma invece di un file.

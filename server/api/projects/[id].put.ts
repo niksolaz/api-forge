@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { requireUser } from "../../utils/auth";
 import { readStore, writeStore } from "../../utils/store";
+import { encryptSecret } from "../../utils/secrets";
 const rule = z.object({
   id: z.string(),
   name: z.string().min(1),
@@ -39,8 +40,12 @@ export default defineEventHandler(async (event) => {
   store.projects[index] = {
     ...current,
     ...data,
-    llmApiKey: data.llmApiKey || current.llmApiKey,
-    databaseUrl: data.databaseUrl || current.databaseUrl,
+    llmApiKey: data.llmApiKey
+      ? encryptSecret(data.llmApiKey)
+      : current.llmApiKey,
+    databaseUrl: data.databaseUrl
+      ? encryptSecret(data.databaseUrl)
+      : current.databaseUrl,
   };
   await writeStore(store);
   const { llmApiKey, databaseUrl, ...safe }: any = store.projects[index];

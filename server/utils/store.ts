@@ -2,6 +2,7 @@ import { promises as fs } from "node:fs";
 import { join } from "node:path";
 import { randomUUID, scryptSync, timingSafeEqual } from "node:crypto";
 import type { ApiRoute, Project } from "~/types";
+import { encryptSecret, isEncrypted } from "./secrets";
 
 interface User {
   id: string;
@@ -19,7 +20,19 @@ const empty: Store = { users: [], projects: [], routes: [] };
 
 export async function readStore(): Promise<Store> {
   try {
-    return JSON.parse(await fs.readFile(file, "utf8"));
+    const data: Store = JSON.parse(await fs.readFile(file, "utf8"));
+    let migrated = false;
+    for (const project of data.projects) {
+      for (const field of ["llmApiKey", "databaseUrl"] as const) {
+        const value = project[field];
+        if (value && !isEncrypted(value)) {
+          project[field] = encryptSecret(value);
+          migrated = true;
+        }
+      }
+    }
+    if (migrated) await writeStore(data);
+    return data;
   } catch {
     await fs.mkdir(join(process.cwd(), "server/data"), { recursive: true });
     await writeStore(empty);
